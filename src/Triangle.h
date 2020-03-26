@@ -28,7 +28,8 @@ namespace TriangleApp
 		TriangleEdges::value_type getExclusiveEdgesSum(TriangleEdgeId edgeId);
 
 	public:
-		static constexpr TriangleEdges::value_type MAX_EDGE = std::numeric_limits<TriangleEdges::value_type>::max() / 2 - 1;
+		// to prevent overflow when verifing if sum of 2 edge weights is greater than the one being compared
+		static constexpr TriangleEdges::value_type MAX_EDGE = std::numeric_limits<TriangleEdges::value_type>::max() / 2;
 		static constexpr TriangleEdges::value_type MIN_EDGE = 1;
 
 	private:
