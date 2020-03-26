@@ -1,8 +1,8 @@
 #include <iostream>
 #include "TriangleRangeException.h"
 #include "TriangleConstructException.h"
+#include "InputException.h"
 #include "Triangle.h"
-#include <limits>
 
 void printTriangleType(TriangleApp::TriangleType tType)
 {
@@ -34,6 +34,9 @@ int wmain()
 	using namespace std;
 	using namespace TriangleApp;
 
+	// Disable sync with old C-style funcs
+	ios_base::sync_with_stdio(false);
+
 	setlocale(LC_ALL, "ru-RU");
 
 	try 
@@ -48,6 +51,9 @@ int wmain()
 		wcin >> b;
 		wcin >> c;
 
+		if (!wcin)
+			throw InputException();
+
 		Triangle triangle({a, b, c});
 
 		auto type = triangle.classify();
@@ -61,6 +67,14 @@ int wmain()
 	catch (TriangleConstructException&)
 	{
 		wcout << L"Стороны не образуют треугольник!\n";
+	}
+	catch (InputException&)
+	{
+		wcout << L"Стороны должны быть целыми числами в диапазоне от " << Triangle::MIN_EDGE << L" до " << Triangle::MAX_EDGE << "!\n";
+	}
+	catch (...)
+	{
+		wcout << L"Случилась неизвестная ошибка!";
 	}
 
 	return 0;

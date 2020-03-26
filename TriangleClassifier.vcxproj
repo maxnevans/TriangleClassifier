@@ -25,6 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Exception.h" />
+    <ClInclude Include="src\InputException.h" />
     <ClInclude Include="src\Triangle.h" />
     <ClInclude Include="src\TriangleConstructException.h" />
     <ClInclude Include="src\TriangleEdges.h" />
