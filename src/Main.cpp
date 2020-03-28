@@ -3,6 +3,7 @@
 #include "TriangleConstructException.h"
 #include "InputException.h"
 #include "Triangle.h"
+#include "Operation.h"
 
 void printTriangleType(TriangleApp::TriangleType tType)
 {
@@ -14,7 +15,7 @@ void printTriangleType(TriangleApp::TriangleType tType)
 	switch (tType)
 	{
 		case TriangleType::BASIC:
-			wcout << L"обычный";
+			wcout << L"неравносторонний";
 			break;
 		case TriangleType::EQUILATERAL:
 			wcout << L"равносторонний";
@@ -29,32 +30,90 @@ void printTriangleType(TriangleApp::TriangleType tType)
 	wcout << L".\n";
 }
 
-int wmain()
+void checkWcinError(bool& error)
+{
+	if (!std::wcin)
+	{
+		std::wcin.clear();
+		error = true;
+	}
+}
+
+TriangleApp::TriangleEdges readTriangleEdges()
 {
 	using namespace std;
 	using namespace TriangleApp;
 
-	// Disable sync with old C-style funcs
-	ios_base::sync_with_stdio(false);
+	wcout << L"Введите 3 стороны треугольника через пробелы и/или через переводы строки: ";
 
-	setlocale(LC_ALL, "ru-RU");
+	TriangleEdges edges;
 
-	try 
+	bool hasError = false;
+
+	wcin >> getTriangleEdge(edges, TriangleEdgeId::A);
+	checkWcinError(hasError);
+	wcin >> getTriangleEdge(edges, TriangleEdgeId::B);
+	checkWcinError(hasError);
+	wcin >> getTriangleEdge(edges, TriangleEdgeId::C);
+	checkWcinError(hasError);
+
+	if (hasError)
 	{
-		wcout << L"Введите 3 стороны треугольника через пробелы: ";
+		std::wcin.seekg(std::ios::end);
+		throw InputException();
+	}
+		
 
-		TriangleEdges::value_type a = 0;
-		TriangleEdges::value_type b = 0;
-		TriangleEdges::value_type c = 0;
+	return edges;
+}
 
-		wcin >> a;
-		wcin >> b;
-		wcin >> c;
 
-		if (!wcin)
-			throw InputException();
+Operation readOperation()
+{
+	using namespace std;
 
-		Triangle triangle({a, b, c});
+	wcout << L"1. Для выполнения вычислений введите ""/calc"".\n";
+	wcout << L"2. Для подсказки введите ""/help"".\n";
+	wcout << L"3. Для выхода из программы введите ""/exit"".\n";
+	std::wstring strOperation;
+	wcin >> strOperation;
+
+	if (strOperation == L"/calc")
+		return Operation::CALC;
+
+	if (strOperation == L"/help")
+		return Operation::HELP;
+
+	if (strOperation == L"/exit")
+		return Operation::EXIT;
+
+	return Operation::UNKNOWN;
+}
+
+void printGreetings()
+{
+	using namespace std;
+	using namespace TriangleApp;
+
+	std::wcout << L"Добро пожаловать!\n"
+		"Программа определяет тип треугольника\n"
+		"Необходимо ввести 3 целых положительных числа в диапазоне от " << Triangle::MIN_EDGE << L" до " << Triangle::MAX_EDGE << L".\n"
+		"Треугольник существует, если сумма любых двух сторон больше третьей.\n"
+		"Равносторонний - треугольник, у которого все стороны равны.\n"
+		"Равнобедренный - треугольник, у которого 2 стороны равны.\n"
+		"Неравностороний - треугольник, у которого все стороны различны.\n";
+}
+
+void mainFunction()
+{
+	using namespace std;
+	using namespace TriangleApp;
+
+	try
+	{
+		auto edges = readTriangleEdges();
+
+		Triangle triangle(edges);
 
 		auto type = triangle.classify();
 
@@ -66,11 +125,66 @@ int wmain()
 	}
 	catch (TriangleConstructException&)
 	{
-		wcout << L"Стороны не образуют треугольник!\n";
+		wcout << L"Стороны не образуют треугольник!Треугольник существует тогда и только тогда, когда сумма любых двух его сторон больше третьей (А+В>C, A+C>B, B+C>A, где А, В, С – длины сторон треугольника).\n";
 	}
 	catch (InputException&)
 	{
 		wcout << L"Стороны должны быть целыми числами в диапазоне от " << Triangle::MIN_EDGE << L" до " << Triangle::MAX_EDGE << "!\n";
+	}
+}
+
+void operationLoop(bool& shouldExit)
+{
+	using namespace std;
+
+	bool successOperation = true;
+	do
+	{
+		auto operation = readOperation();
+
+		switch (operation)
+		{
+		case Operation::EXIT:
+			successOperation = true;
+			shouldExit = true;
+			break;
+		case Operation::CALC:
+			successOperation = true;			
+			mainFunction();
+			break;
+		case Operation::HELP:
+			successOperation = true;
+			printGreetings();
+			break;
+		case Operation::UNKNOWN:
+		default:
+			successOperation = false;
+			wcout << L"Неизвестная операция! Повторите ввода заново!\n";
+			break;
+		}
+	} while (!successOperation);
+}
+
+
+int wmain()
+{
+	using namespace std;
+	using namespace TriangleApp;
+
+	// Disable sync with old C-style funcs
+	ios_base::sync_with_stdio(false);
+
+	setlocale(LC_ALL, "ru-RU");
+
+	printGreetings();
+
+	try
+	{
+		bool shouldExit = false;
+		do
+		{
+			operationLoop(shouldExit);
+		} while (!shouldExit);
 	}
 	catch (...)
 	{

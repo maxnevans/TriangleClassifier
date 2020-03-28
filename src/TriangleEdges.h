@@ -15,6 +15,12 @@ namespace TriangleApp
 	};
 
 	// Use to get edge from it's name.
+	inline TriangleEdges::value_type& getTriangleEdge(TriangleEdges& edges, TriangleEdgeId edgeId)
+	{
+		auto index = static_cast<typename std::underlying_type<TriangleEdgeId>::type>(edgeId);
+		return edges.at(index);
+	}
+
 	inline TriangleEdges::value_type getTriangleEdge(const TriangleEdges& edges, TriangleEdgeId edgeId)
 	{
 		auto index = static_cast<typename std::underlying_type<TriangleEdgeId>::type>(edgeId);

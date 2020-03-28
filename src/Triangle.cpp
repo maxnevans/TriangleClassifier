@@ -45,7 +45,7 @@ TriangleApp::TriangleType TriangleApp::Triangle::classify()
 		return TriangleType::EQUILATERAL;
 
 	// isosceles triangle test
-	if (b == c)
+	if (b == c || a == b)
 		return TriangleType::ISOSCELES;
 
 	return TriangleType::BASIC;
