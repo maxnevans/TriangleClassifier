@@ -124,6 +124,7 @@ Operation readOperation()
 	wcout << L"1. Для выполнения вычислений введите ""/calc"".\n";
 	wcout << L"2. Для подсказки введите ""/help"".\n";
 	wcout << L"3. Для выхода из программы введите ""/exit"".\n";
+	wcout << L"> ";
 	std::wstring strOperation;
 	wcin >> strOperation;
 
