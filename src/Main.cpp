@@ -1,9 +1,11 @@
 #include <iostream>
+#include <sstream>
 #include "TriangleRangeException.h"
 #include "TriangleConstructException.h"
 #include "InputException.h"
 #include "Triangle.h"
 #include "Operation.h"
+#include <vector>
 
 void printTriangleType(TriangleApp::TriangleType tType)
 {
@@ -39,6 +41,43 @@ void checkWcinError(bool& error)
 	}
 }
 
+void readTriangleEdge(TriangleApp::TriangleEdges& edges, TriangleApp::TriangleEdgeId edgeId)
+{
+	using namespace std;
+	using namespace TriangleApp;
+
+	wstring strEdge;
+	wcin >> strEdge;
+
+	try
+	{
+		getTriangleEdge(edges, edgeId) = stoi(strEdge);
+
+		if (strEdge.front() == L'0' && strEdge.size() > 1)
+		{
+			wstringstream message;
+			message << L"Длина стороны не должна начинаться с 0!\n";
+
+			throw InputException(message.str());
+		}
+			
+	}
+	catch (invalid_argument&)
+	{
+		wstringstream message;
+		message << L"Стороны должны быть целыми числами в диапазоне от " << Triangle::MIN_EDGE << L" до " << Triangle::MAX_EDGE << "!\n";
+
+		throw InputException(message.str());
+	}
+	catch (out_of_range&)
+	{
+		wstringstream message;
+		message << L"Стороны должны быть целыми числами в диапазоне от " << Triangle::MIN_EDGE << L" до " << Triangle::MAX_EDGE << "!\n";
+
+		throw InputException(message.str());
+	}
+}
+
 TriangleApp::TriangleEdges readTriangleEdges()
 {
 	using namespace std;
@@ -46,23 +85,33 @@ TriangleApp::TriangleEdges readTriangleEdges()
 
 	wcout << L"Введите 3 стороны треугольника через пробелы и/или через переводы строки: ";
 
-	TriangleEdges edges;
+	TriangleEdges edges = {};
+	vector<wstring> errorMessages;
 
-	bool hasError = false;
-
-	wcin >> getTriangleEdge(edges, TriangleEdgeId::A);
-	checkWcinError(hasError);
-	wcin >> getTriangleEdge(edges, TriangleEdgeId::B);
-	checkWcinError(hasError);
-	wcin >> getTriangleEdge(edges, TriangleEdgeId::C);
-	checkWcinError(hasError);
-
-	if (hasError)
+	for (const auto edgeId : TriangleEdgeIdIterator)
 	{
-		std::wcin.seekg(std::ios::end);
-		throw InputException();
+		try
+		{
+			readTriangleEdge(edges, edgeId);
+		}
+		catch (InputException& exception)
+		{
+			errorMessages.push_back(exception.what());
+		}
 	}
-		
+
+	if (errorMessages.size() > 0)
+	{
+		std::wcin.clear();
+		std::wcin.seekg(std::ios::end);
+
+		wstringstream ss;
+
+		for (auto message : errorMessages)
+			ss << message;
+
+		throw InputException(ss.str());
+	}
 
 	return edges;
 }
@@ -127,9 +176,9 @@ void mainFunction()
 	{
 		wcout << L"Стороны не образуют треугольник!Треугольник существует тогда и только тогда, когда сумма любых двух его сторон больше третьей (А+В>C, A+C>B, B+C>A, где А, В, С – длины сторон треугольника).\n";
 	}
-	catch (InputException&)
+	catch (InputException& exception)
 	{
-		wcout << L"Стороны должны быть целыми числами в диапазоне от " << Triangle::MIN_EDGE << L" до " << Triangle::MAX_EDGE << "!\n";
+		wcout << exception.what();
 	}
 }
 

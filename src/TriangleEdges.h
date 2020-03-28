@@ -3,8 +3,11 @@
 
 namespace TriangleApp
 {
+	static constexpr int TriangleEdgesCount = 3;
+	typedef int TriangleEdgeSize;
+
 	// Triangle 3 edges type.
-	typedef std::array<int, 3> TriangleEdges;
+	typedef std::array<TriangleEdgeSize, TriangleEdgesCount> TriangleEdges;
 
 	// Triangle edges names.
 	enum class TriangleEdgeId
@@ -12,6 +15,12 @@ namespace TriangleApp
 		A = 0,
 		B = 1,
 		C = 2
+	};
+
+	static constexpr std::array<TriangleEdgeId, TriangleEdgesCount> TriangleEdgeIdIterator = {
+		TriangleEdgeId::A,
+		TriangleEdgeId::B,
+		TriangleEdgeId::C
 	};
 
 	// Use to get edge from it's name.

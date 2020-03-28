@@ -10,22 +10,22 @@ TriangleApp::Triangle::Triangle(const TriangleEdges& edges)
 	verified = false;
 }
 
-TriangleApp::TriangleEdges::value_type TriangleApp::Triangle::edgeA() const
+TriangleApp::TriangleEdgeSize TriangleApp::Triangle::edgeA() const
 {
 	return TriangleApp::getTriangleEdge(edges, TriangleEdgeId::A);
 }
 
-TriangleApp::TriangleEdges::value_type TriangleApp::Triangle::edgeB() const
+TriangleApp::TriangleEdgeSize TriangleApp::Triangle::edgeB() const
 {
 	return TriangleApp::getTriangleEdge(edges, TriangleEdgeId::B);
 }
 
-TriangleApp::TriangleEdges::value_type TriangleApp::Triangle::edgeC() const
+TriangleApp::TriangleEdgeSize TriangleApp::Triangle::edgeC() const
 {
 	return TriangleApp::getTriangleEdge(edges, TriangleEdgeId::C);
 }
 
-TriangleApp::TriangleEdges::value_type TriangleApp::Triangle::edge(TriangleEdgeId edgeId) const
+TriangleApp::TriangleEdgeSize TriangleApp::Triangle::edge(TriangleEdgeId edgeId) const
 {
 	return TriangleApp::getTriangleEdge(edges, edgeId);
 }
@@ -82,9 +82,9 @@ bool TriangleApp::Triangle::isValidEdges()
 	return true;
 }
 
-TriangleApp::TriangleEdges::value_type TriangleApp::Triangle::getExclusiveEdgesSum(TriangleEdgeId edgeId)
+TriangleApp::TriangleEdgeSize TriangleApp::Triangle::getExclusiveEdgesSum(TriangleEdgeId edgeId)
 {
-	TriangleEdges::value_type sum = 0;
+	TriangleEdgeSize sum = 0;
 
 	for (const auto& e : edges)
 		sum += e;
