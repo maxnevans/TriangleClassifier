@@ -5,7 +5,7 @@
 #include "InputException.h"
 #include "Triangle.h"
 #include "Operation.h"
-#include <vector>
+#include <set>
 
 void printTriangleType(TriangleApp::TriangleType tType)
 {
@@ -86,7 +86,7 @@ TriangleApp::TriangleEdges readTriangleEdges()
 	wcout << L"Введите 3 стороны треугольника через пробелы и/или через переводы строки: ";
 
 	TriangleEdges edges = {};
-	vector<wstring> errorMessages;
+	set<wstring> errorMessages;
 
 	for (const auto edgeId : TriangleEdgeIdIterator)
 	{
@@ -96,7 +96,7 @@ TriangleApp::TriangleEdges readTriangleEdges()
 		}
 		catch (InputException& exception)
 		{
-			errorMessages.push_back(exception.what());
+			errorMessages.insert(exception.what());
 		}
 	}
 
